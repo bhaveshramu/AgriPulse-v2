@@ -43,9 +43,9 @@ export const Route = createFileRoute("/_authenticated/market")({
 
 function MarketPage() {
   const t = useTranslation();
-  const [cropName, setCropName] = useState<string>(MARKET_CROPS[0]);
-  const [state, setState] = useState<string>(MARKET_STATES[0]);
-  const [marketName, setMarketName] = useState<string>(MARKET_PLACES[MARKET_STATES[0]][0]);
+  const [cropName, setCropName] = useState<string>(MARKET_CROPS[0] ?? "");
+  const [state, setState] = useState<string>(MARKET_STATES[0] ?? "");
+  const [marketName, setMarketName] = useState<string>(MARKET_PLACES["Karnataka"]?.[0] ?? "");
 
   const query = useQuery({
     queryKey: ["market", cropName, state, marketName],
@@ -88,7 +88,7 @@ function MarketPage() {
                 value={state}
                 onValueChange={(value) => {
                   setState(value);
-                  setMarketName((MARKET_PLACES[value] ?? [""])[0]);
+                  setMarketName(MARKET_PLACES[value]?.[0] ?? "");
                 }}
               >
                 <SelectTrigger id="state" className="h-12">

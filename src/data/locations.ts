@@ -1,5 +1,5 @@
 /** Reference location data. Replaced by a full state/district dataset later. */
-export const INDIAN_STATES = [
+export const INDIAN_STATES: string[] = [
   "Andhra Pradesh",
   "Bihar",
   "Gujarat",

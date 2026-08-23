@@ -90,7 +90,7 @@ function SettingsPage() {
             </p>
             <Button variant="outline" className="h-12" onClick={handleSignOut}>
               <LogOut className="mr-2 h-4 w-4" />
-              {t("nav.signOut")}
+              Sign out
             </Button>
           </CardContent>
         </Card>

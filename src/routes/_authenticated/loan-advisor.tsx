@@ -41,12 +41,12 @@ export const Route = createFileRoute("/_authenticated/loan-advisor")({
 
 const initialAnswers: LoanAnswers = {
   landArea: "",
-  cropType: CROP_OPTIONS[0],
+  cropType: CROP_OPTIONS[0] ?? "Tomato",
   annualIncome: "",
   existingLoans: "no",
   experienceYears: "",
   irrigation: "yes",
-  soilType: SOIL_TYPES[0],
+  soilType: SOIL_TYPES[0] ?? "Red",
   cropHistory: "good",
 };
 

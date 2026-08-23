@@ -1,7 +1,7 @@
 import type { MarketReport } from "@/types";
 
-export const MARKET_CROPS = ["Tomato", "Potato", "Onion", "Maize"] as const;
-export const MARKET_STATES = ["Karnataka", "Maharashtra", "Tamil Nadu"] as const;
+export const MARKET_CROPS: string[] = ["Tomato", "Potato", "Onion", "Maize"];
+export const MARKET_STATES: string[] = ["Karnataka", "Maharashtra", "Tamil Nadu"];
 export const MARKET_PLACES: Record<string, string[]> = {
   Karnataka: ["Hubballi APMC", "Belagavi APMC", "Bengaluru APMC"],
   Maharashtra: ["Pune APMC", "Nashik APMC"],

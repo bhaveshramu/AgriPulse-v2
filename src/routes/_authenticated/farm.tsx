@@ -71,23 +71,23 @@ function FarmPage() {
 
   const [farmForm, setFarmForm] = useState({
     name: "",
-    state: INDIAN_STATES[0],
-    district: (DISTRICTS_BY_STATE[INDIAN_STATES[0]] ?? [""])[0],
+    state: INDIAN_STATES[0] ?? "",
+    district: DISTRICTS_BY_STATE["Karnataka"]?.[0] ?? "",
     village: "",
     land_area: "",
-    land_unit: LAND_UNITS[0],
-    soil_type: SOIL_TYPES[0],
-    irrigation_type: IRRIGATION_TYPES[0],
+    land_unit: LAND_UNITS[0] ?? "acre",
+    soil_type: SOIL_TYPES[0] ?? "",
+    irrigation_type: IRRIGATION_TYPES[0] ?? "",
   });
 
   const [cropForm, setCropForm] = useState({
     farm_id: "",
-    name: CROP_OPTIONS[0],
+    name: CROP_OPTIONS[0] ?? "Tomato",
     variety: "",
     sowing_date: "",
     expected_harvest_date: "",
     area: "",
-    growth_stage: GROWTH_STAGES[0],
+    growth_stage: GROWTH_STAGES[0] ?? "Sowing",
   });
 
   const addFarm = useMutation({
@@ -199,7 +199,7 @@ function FarmPage() {
                         setFarmForm({
                           ...farmForm,
                           state: value,
-                          district: (DISTRICTS_BY_STATE[value] ?? [""])[0],
+                          district: DISTRICTS_BY_STATE[value]?.[0] ?? "",
                         })
                       }
                     >

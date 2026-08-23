@@ -41,7 +41,7 @@ function ProfilePage() {
   const [form, setForm] = useState({
     full_name: "",
     mobile_number: "",
-    state: INDIAN_STATES[0],
+    state: INDIAN_STATES[0] ?? "",
     district: "",
     village: "",
     farming_experience_years: "",
@@ -52,7 +52,7 @@ function ProfilePage() {
     setForm({
       full_name: profile.full_name ?? "",
       mobile_number: profile.mobile_number ?? "",
-      state: profile.state ?? INDIAN_STATES[0],
+      state: profile.state ?? INDIAN_STATES[0] ?? "",
       district: profile.district ?? "",
       village: profile.village ?? "",
       farming_experience_years:
@@ -137,7 +137,7 @@ function ProfilePage() {
                     <Select
                       value={form.state}
                       onValueChange={(value) =>
-                        setForm({ ...form, state: value, district: (DISTRICTS_BY_STATE[value] ?? [""])[0] })
+                        setForm({ ...form, state: value, district: DISTRICTS_BY_STATE[value]?.[0] ?? "" })
                       }
                     >
                       <SelectTrigger id="profile-state" className="h-12">
