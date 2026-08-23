@@ -20,33 +20,45 @@ export type Database = {
           category: string
           created_at: string
           crop_name: string | null
+          district: string | null
           id: string
           is_demo: boolean
           language: string
+          state: string | null
           title: string
           updated_at: string
+          valid_from: string | null
+          valid_to: string | null
         }
         Insert: {
           body: string
           category: string
           created_at?: string
           crop_name?: string | null
+          district?: string | null
           id?: string
           is_demo?: boolean
           language?: string
+          state?: string | null
           title: string
           updated_at?: string
+          valid_from?: string | null
+          valid_to?: string | null
         }
         Update: {
           body?: string
           category?: string
           created_at?: string
           crop_name?: string | null
+          district?: string | null
           id?: string
           is_demo?: boolean
           language?: string
+          state?: string | null
           title?: string
           updated_at?: string
+          valid_from?: string | null
+          valid_to?: string | null
         }
         Relationships: []
       }
@@ -110,11 +122,15 @@ export type Database = {
           crop_id: string | null
           crop_name: string
           detected_disease: string | null
+          farm_id: string | null
           id: string
           image_url: string | null
           is_demo: boolean
+          model_version: string | null
           owner_id: string
+          raw_predictions: Json | null
           recommendation: string | null
+          scanned_at: string
           severity: string | null
           status: string
           updated_at: string
@@ -125,11 +141,15 @@ export type Database = {
           crop_id?: string | null
           crop_name: string
           detected_disease?: string | null
+          farm_id?: string | null
           id?: string
           image_url?: string | null
           is_demo?: boolean
+          model_version?: string | null
           owner_id: string
+          raw_predictions?: Json | null
           recommendation?: string | null
+          scanned_at?: string
           severity?: string | null
           status?: string
           updated_at?: string
@@ -140,11 +160,15 @@ export type Database = {
           crop_id?: string | null
           crop_name?: string
           detected_disease?: string | null
+          farm_id?: string | null
           id?: string
           image_url?: string | null
           is_demo?: boolean
+          model_version?: string | null
           owner_id?: string
+          raw_predictions?: Json | null
           recommendation?: string | null
+          scanned_at?: string
           severity?: string | null
           status?: string
           updated_at?: string
@@ -155,6 +179,13 @@ export type Database = {
             columns: ["crop_id"]
             isOneToOne: false
             referencedRelation: "crops"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "disease_scans_farm_id_fkey"
+            columns: ["farm_id"]
+            isOneToOne: false
+            referencedRelation: "farms"
             referencedColumns: ["id"]
           },
         ]
@@ -168,11 +199,13 @@ export type Database = {
           hourly_price: number
           id: string
           image_url: string | null
+          image_urls: string[]
           is_available: boolean
           latitude: number | null
           longitude: number | null
           owner_id: string
           rating: number
+          rating_count: number
           state: string | null
           title: string
           updated_at: string
@@ -186,11 +219,13 @@ export type Database = {
           hourly_price?: number
           id?: string
           image_url?: string | null
+          image_urls?: string[]
           is_available?: boolean
           latitude?: number | null
           longitude?: number | null
           owner_id: string
           rating?: number
+          rating_count?: number
           state?: string | null
           title: string
           updated_at?: string
@@ -204,11 +239,13 @@ export type Database = {
           hourly_price?: number
           id?: string
           image_url?: string | null
+          image_urls?: string[]
           is_available?: boolean
           latitude?: number | null
           longitude?: number | null
           owner_id?: string
           rating?: number
+          rating_count?: number
           state?: string | null
           title?: string
           updated_at?: string
@@ -220,11 +257,15 @@ export type Database = {
         Row: {
           created_at: string
           end_date: string | null
+          end_time: string | null
           equipment_id: string
           hours: number | null
           id: string
+          payment_reference: string | null
+          payment_status: string
           renter_id: string
           start_date: string
+          start_time: string | null
           status: string
           total_amount: number | null
           updated_at: string
@@ -232,11 +273,15 @@ export type Database = {
         Insert: {
           created_at?: string
           end_date?: string | null
+          end_time?: string | null
           equipment_id: string
           hours?: number | null
           id?: string
+          payment_reference?: string | null
+          payment_status?: string
           renter_id: string
           start_date: string
+          start_time?: string | null
           status?: string
           total_amount?: number | null
           updated_at?: string
@@ -244,11 +289,15 @@ export type Database = {
         Update: {
           created_at?: string
           end_date?: string | null
+          end_time?: string | null
           equipment_id?: string
           hours?: number | null
           id?: string
+          payment_reference?: string | null
+          payment_status?: string
           renter_id?: string
           start_date?: string
+          start_time?: string | null
           status?: string
           total_amount?: number | null
           updated_at?: string
@@ -314,6 +363,65 @@ export type Database = {
         }
         Relationships: []
       }
+      loan_assessments: {
+        Row: {
+          annual_income_band: string | null
+          created_at: string
+          farm_id: string | null
+          farming_experience_years: number | null
+          has_existing_loan: boolean
+          id: string
+          indicative_amount: number | null
+          land_area: number | null
+          land_unit: string
+          primary_crop: string | null
+          readiness_score: number | null
+          result_summary: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          annual_income_band?: string | null
+          created_at?: string
+          farm_id?: string | null
+          farming_experience_years?: number | null
+          has_existing_loan?: boolean
+          id?: string
+          indicative_amount?: number | null
+          land_area?: number | null
+          land_unit?: string
+          primary_crop?: string | null
+          readiness_score?: number | null
+          result_summary?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          annual_income_band?: string | null
+          created_at?: string
+          farm_id?: string | null
+          farming_experience_years?: number | null
+          has_existing_loan?: boolean
+          id?: string
+          indicative_amount?: number | null
+          land_area?: number | null
+          land_unit?: string
+          primary_crop?: string | null
+          readiness_score?: number | null
+          result_summary?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loan_assessments_farm_id_fkey"
+            columns: ["farm_id"]
+            isOneToOne: false
+            referencedRelation: "farms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       market_data: {
         Row: {
           created_at: string
@@ -353,6 +461,57 @@ export type Database = {
           price_date?: string
           source?: string
           state?: string
+        }
+        Relationships: []
+      }
+      market_predictions: {
+        Row: {
+          confidence: number | null
+          created_at: string
+          crop_name: string
+          district: string | null
+          id: string
+          is_demo: boolean
+          lower_bound: number | null
+          market_name: string | null
+          model_version: string
+          predicted_price: number
+          state: string
+          target_date: string
+          updated_at: string
+          upper_bound: number | null
+        }
+        Insert: {
+          confidence?: number | null
+          created_at?: string
+          crop_name: string
+          district?: string | null
+          id?: string
+          is_demo?: boolean
+          lower_bound?: number | null
+          market_name?: string | null
+          model_version?: string
+          predicted_price: number
+          state: string
+          target_date: string
+          updated_at?: string
+          upper_bound?: number | null
+        }
+        Update: {
+          confidence?: number | null
+          created_at?: string
+          crop_name?: string
+          district?: string | null
+          id?: string
+          is_demo?: boolean
+          lower_bound?: number | null
+          market_name?: string | null
+          model_version?: string
+          predicted_price?: number
+          state?: string
+          target_date?: string
+          updated_at?: string
+          upper_bound?: number | null
         }
         Relationships: []
       }
@@ -453,39 +612,60 @@ export type Database = {
         Row: {
           condition: string | null
           created_at: string
+          district: string | null
           farm_id: string | null
+          forecast_time: string | null
           humidity_percent: number | null
           id: string
+          latitude: number | null
           location_name: string
+          longitude: number | null
           rain_probability_percent: number | null
+          rainfall_mm: number | null
           recorded_for: string
+          retrieved_at: string
           source: string
+          state: string | null
           temperature_c: number | null
           wind_speed_kmph: number | null
         }
         Insert: {
           condition?: string | null
           created_at?: string
+          district?: string | null
           farm_id?: string | null
+          forecast_time?: string | null
           humidity_percent?: number | null
           id?: string
+          latitude?: number | null
           location_name: string
+          longitude?: number | null
           rain_probability_percent?: number | null
+          rainfall_mm?: number | null
           recorded_for: string
+          retrieved_at?: string
           source?: string
+          state?: string | null
           temperature_c?: number | null
           wind_speed_kmph?: number | null
         }
         Update: {
           condition?: string | null
           created_at?: string
+          district?: string | null
           farm_id?: string | null
+          forecast_time?: string | null
           humidity_percent?: number | null
           id?: string
+          latitude?: number | null
           location_name?: string
+          longitude?: number | null
           rain_probability_percent?: number | null
+          rainfall_mm?: number | null
           recorded_for?: string
+          retrieved_at?: string
           source?: string
+          state?: string | null
           temperature_c?: number | null
           wind_speed_kmph?: number | null
         }
