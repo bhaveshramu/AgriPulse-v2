@@ -13,7 +13,9 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as RegisterRouteImport } from './routes/register'
+import { Route as AuthenticatedAdvisoryRouteImport } from './routes/_authenticated/advisory'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedDiseaseDetectionRouteImport } from './routes/_authenticated/disease-detection'
 import { Route as AuthenticatedMarketRouteImport } from './routes/_authenticated/market'
 import { Route as AuthenticatedWeatherRouteImport } from './routes/_authenticated/weather'
 
@@ -36,11 +38,22 @@ const RegisterRoute = RegisterRouteImport.update({
   path: '/register',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdvisoryRoute = AuthenticatedAdvisoryRouteImport.update({
+  id: '/advisory',
+  path: '/advisory',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedDiseaseDetectionRoute =
+  AuthenticatedDiseaseDetectionRouteImport.update({
+    id: '/disease-detection',
+    path: '/disease-detection',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedMarketRoute = AuthenticatedMarketRouteImport.update({
   id: '/market',
   path: '/market',
@@ -56,7 +69,9 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/advisory': typeof AuthenticatedAdvisoryRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/disease-detection': typeof AuthenticatedDiseaseDetectionRoute
   '/market': typeof AuthenticatedMarketRoute
   '/weather': typeof AuthenticatedWeatherRoute
 }
@@ -64,7 +79,9 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/advisory': typeof AuthenticatedAdvisoryRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/disease-detection': typeof AuthenticatedDiseaseDetectionRoute
   '/market': typeof AuthenticatedMarketRoute
   '/weather': typeof AuthenticatedWeatherRoute
 }
@@ -74,23 +91,42 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/_authenticated/advisory': typeof AuthenticatedAdvisoryRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/disease-detection': typeof AuthenticatedDiseaseDetectionRoute
   '/_authenticated/market': typeof AuthenticatedMarketRoute
   '/_authenticated/weather': typeof AuthenticatedWeatherRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/login' | '/register' | '/dashboard' | '/market' | '/weather'
+    | '/'
+    | '/login'
+    | '/register'
+    | '/advisory'
+    | '/dashboard'
+    | '/disease-detection'
+    | '/market'
+    | '/weather'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/register' | '/dashboard' | '/market' | '/weather'
+  to:
+    | '/'
+    | '/login'
+    | '/register'
+    | '/advisory'
+    | '/dashboard'
+    | '/disease-detection'
+    | '/market'
+    | '/weather'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/login'
     | '/register'
+    | '/_authenticated/advisory'
     | '/_authenticated/dashboard'
+    | '/_authenticated/disease-detection'
     | '/_authenticated/market'
     | '/_authenticated/weather'
   fileRoutesById: FileRoutesById
@@ -132,11 +168,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/advisory': {
+      id: '/_authenticated/advisory'
+      path: '/advisory'
+      fullPath: '/advisory'
+      preLoaderRoute: typeof AuthenticatedAdvisoryRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/disease-detection': {
+      id: '/_authenticated/disease-detection'
+      path: '/disease-detection'
+      fullPath: '/disease-detection'
+      preLoaderRoute: typeof AuthenticatedDiseaseDetectionRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/market': {
@@ -157,13 +207,17 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdvisoryRoute: typeof AuthenticatedAdvisoryRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedDiseaseDetectionRoute: typeof AuthenticatedDiseaseDetectionRoute
   AuthenticatedMarketRoute: typeof AuthenticatedMarketRoute
   AuthenticatedWeatherRoute: typeof AuthenticatedWeatherRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdvisoryRoute: AuthenticatedAdvisoryRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedDiseaseDetectionRoute: AuthenticatedDiseaseDetectionRoute,
   AuthenticatedMarketRoute: AuthenticatedMarketRoute,
   AuthenticatedWeatherRoute: AuthenticatedWeatherRoute,
 }
