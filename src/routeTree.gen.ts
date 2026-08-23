@@ -16,6 +16,8 @@ import { Route as RegisterRouteImport } from './routes/register'
 import { Route as AuthenticatedAdvisoryRouteImport } from './routes/_authenticated/advisory'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedDiseaseDetectionRouteImport } from './routes/_authenticated/disease-detection'
+import { Route as AuthenticatedFarmRouteImport } from './routes/_authenticated/farm'
+import { Route as AuthenticatedLoanAdvisorRouteImport } from './routes/_authenticated/loan-advisor'
 import { Route as AuthenticatedMarketRouteImport } from './routes/_authenticated/market'
 import { Route as AuthenticatedWeatherRouteImport } from './routes/_authenticated/weather'
 
@@ -54,6 +56,17 @@ const AuthenticatedDiseaseDetectionRoute =
     path: '/disease-detection',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedFarmRoute = AuthenticatedFarmRouteImport.update({
+  id: '/farm',
+  path: '/farm',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedLoanAdvisorRoute =
+  AuthenticatedLoanAdvisorRouteImport.update({
+    id: '/loan-advisor',
+    path: '/loan-advisor',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedMarketRoute = AuthenticatedMarketRouteImport.update({
   id: '/market',
   path: '/market',
@@ -72,6 +85,8 @@ export interface FileRoutesByFullPath {
   '/advisory': typeof AuthenticatedAdvisoryRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/disease-detection': typeof AuthenticatedDiseaseDetectionRoute
+  '/farm': typeof AuthenticatedFarmRoute
+  '/loan-advisor': typeof AuthenticatedLoanAdvisorRoute
   '/market': typeof AuthenticatedMarketRoute
   '/weather': typeof AuthenticatedWeatherRoute
 }
@@ -82,6 +97,8 @@ export interface FileRoutesByTo {
   '/advisory': typeof AuthenticatedAdvisoryRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/disease-detection': typeof AuthenticatedDiseaseDetectionRoute
+  '/farm': typeof AuthenticatedFarmRoute
+  '/loan-advisor': typeof AuthenticatedLoanAdvisorRoute
   '/market': typeof AuthenticatedMarketRoute
   '/weather': typeof AuthenticatedWeatherRoute
 }
@@ -94,6 +111,8 @@ export interface FileRoutesById {
   '/_authenticated/advisory': typeof AuthenticatedAdvisoryRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/disease-detection': typeof AuthenticatedDiseaseDetectionRoute
+  '/_authenticated/farm': typeof AuthenticatedFarmRoute
+  '/_authenticated/loan-advisor': typeof AuthenticatedLoanAdvisorRoute
   '/_authenticated/market': typeof AuthenticatedMarketRoute
   '/_authenticated/weather': typeof AuthenticatedWeatherRoute
 }
@@ -106,6 +125,8 @@ export interface FileRouteTypes {
     | '/advisory'
     | '/dashboard'
     | '/disease-detection'
+    | '/farm'
+    | '/loan-advisor'
     | '/market'
     | '/weather'
   fileRoutesByTo: FileRoutesByTo
@@ -116,6 +137,8 @@ export interface FileRouteTypes {
     | '/advisory'
     | '/dashboard'
     | '/disease-detection'
+    | '/farm'
+    | '/loan-advisor'
     | '/market'
     | '/weather'
   id:
@@ -127,6 +150,8 @@ export interface FileRouteTypes {
     | '/_authenticated/advisory'
     | '/_authenticated/dashboard'
     | '/_authenticated/disease-detection'
+    | '/_authenticated/farm'
+    | '/_authenticated/loan-advisor'
     | '/_authenticated/market'
     | '/_authenticated/weather'
   fileRoutesById: FileRoutesById
@@ -189,6 +214,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDiseaseDetectionRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/farm': {
+      id: '/_authenticated/farm'
+      path: '/farm'
+      fullPath: '/farm'
+      preLoaderRoute: typeof AuthenticatedFarmRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/loan-advisor': {
+      id: '/_authenticated/loan-advisor'
+      path: '/loan-advisor'
+      fullPath: '/loan-advisor'
+      preLoaderRoute: typeof AuthenticatedLoanAdvisorRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/market': {
       id: '/_authenticated/market'
       path: '/market'
@@ -210,6 +249,8 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdvisoryRoute: typeof AuthenticatedAdvisoryRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedDiseaseDetectionRoute: typeof AuthenticatedDiseaseDetectionRoute
+  AuthenticatedFarmRoute: typeof AuthenticatedFarmRoute
+  AuthenticatedLoanAdvisorRoute: typeof AuthenticatedLoanAdvisorRoute
   AuthenticatedMarketRoute: typeof AuthenticatedMarketRoute
   AuthenticatedWeatherRoute: typeof AuthenticatedWeatherRoute
 }
@@ -218,6 +259,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdvisoryRoute: AuthenticatedAdvisoryRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedDiseaseDetectionRoute: AuthenticatedDiseaseDetectionRoute,
+  AuthenticatedFarmRoute: AuthenticatedFarmRoute,
+  AuthenticatedLoanAdvisorRoute: AuthenticatedLoanAdvisorRoute,
   AuthenticatedMarketRoute: AuthenticatedMarketRoute,
   AuthenticatedWeatherRoute: AuthenticatedWeatherRoute,
 }
