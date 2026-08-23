@@ -19,5 +19,5 @@ export async function listAdvisories(filters: AdvisoryFilters = {}): Promise<Adv
 
 export async function getDailyAdvisory(): Promise<AdvisoryItem> {
   await simulateNetwork(250);
-  return mockAdvisories[0];
+  return mockAdvisories[0]!;
 }
