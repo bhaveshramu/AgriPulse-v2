@@ -17,6 +17,7 @@ import { getDailyAdvisory } from "@/services/advisoryService";
 import { listCrops } from "@/services/farmService";
 import { getMarketReport } from "@/services/marketService";
 import { getWeatherReport } from "@/services/weatherService";
+import type { TranslationKey } from "@/translations/en";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
@@ -30,36 +31,39 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
   component: DashboardPage,
 });
 
-const demoAlerts: AlertItem[] = [
+const demoAlerts: (Omit<AlertItem, "title" | "message"> & {
+  titleKey: TranslationKey;
+  messageKey: TranslationKey;
+})[] = [
   {
     id: "a1",
-    title: "Heavy rain expected on Friday",
-    message: "Check drainage in low-lying fields and postpone spraying.",
+    titleKey: "dashboard.alert1.title",
+    messageKey: "dashboard.alert1.message",
     level: "warning",
     kind: "weather",
   },
   {
     id: "a2",
-    title: "Late blight risk is high this week",
-    message: "Humidity above 80% for two days. Inspect tomato leaves for dark spots.",
+    titleKey: "dashboard.alert2.title",
+    messageKey: "dashboard.alert2.message",
     level: "severe",
     kind: "crop",
   },
   {
     id: "a3",
-    title: "Tomato price rose 6% at Hubballi APMC",
-    message: "Compare nearby markets before selling this week.",
+    titleKey: "dashboard.alert3.title",
+    messageKey: "dashboard.alert3.message",
     level: "info",
     kind: "market",
   },
 ];
 
-const quickActions = [
-  { to: "/disease-detection", label: "Scan Crop", icon: Bug },
-  { to: "/market", label: "Check Market Price", icon: IndianRupee },
-  { to: "/weather", label: "Weather", icon: CloudSun },
-  { to: "/equipment", label: "Rent Equipment", icon: Tractor },
-  { to: "/advisory", label: "Farm Advisory", icon: Leaf },
+const quickActions: { to: string; labelKey: TranslationKey; icon: typeof Bug }[] = [
+  { to: "/disease-detection", labelKey: "dashboard.scanCrop", icon: Bug },
+  { to: "/market", labelKey: "dashboard.checkMarketPrice", icon: IndianRupee },
+  { to: "/weather", labelKey: "weather.title", icon: CloudSun },
+  { to: "/equipment", labelKey: "dashboard.rentEquipment", icon: Tractor },
+  { to: "/advisory", labelKey: "dashboard.farmAdvisory", icon: Leaf },
 ];
 
 function DashboardPage() {
@@ -85,14 +89,13 @@ function DashboardPage() {
       <header>
         <p className="text-sm text-muted-foreground">{t("dashboard.welcome")}</p>
         <h1 className="font-display text-2xl font-semibold text-foreground sm:text-3xl">
-          {profile?.full_name || "Farmer"}
+          {profile?.full_name || t("profile.farmer")}
         </h1>
         {locationName ? <p className="mt-1 text-muted-foreground">{locationName}</p> : null}
       </header>
 
       <DemoNotice>
-        Weather, market and crop-check information on this screen is demo data. Live data services are
-        connected in a later part of the project.
+{t("dashboard.demoNotice")}
       </DemoNotice>
 
       <section aria-labelledby="quick-actions">
@@ -111,7 +114,7 @@ function DashboardPage() {
               >
                 <Link to={action.to}>
                   <Icon className="h-6 w-6 text-primary" aria-hidden="true" />
-                  {action.label}
+                  {t(action.labelKey)}
                 </Link>
               </Button>
             );
@@ -128,7 +131,7 @@ function DashboardPage() {
             <LoadingState message={t("common.loading")} rows={2} />
           ) : weatherQuery.isError || !weatherQuery.data ? (
             <ErrorState
-              message="Weather information is temporarily unavailable. Please try again later."
+              message={t("dashboard.weatherUnavailable")}
               onRetry={() => weatherQuery.refetch()}
             />
           ) : (
@@ -152,7 +155,7 @@ function DashboardPage() {
             <LoadingState rows={2} />
           ) : marketQuery.isError || !marketQuery.data ? (
             <ErrorState
-              message="Market prices are temporarily unavailable. Please try again later."
+              message={t("dashboard.marketUnavailable")}
               onRetry={() => marketQuery.refetch()}
             />
           ) : (
@@ -182,15 +185,15 @@ function DashboardPage() {
         {cropsQuery.isPending ? (
           <LoadingState rows={2} />
         ) : cropsQuery.isError ? (
-          <ErrorState message="Your crop list could not be loaded." onRetry={() => cropsQuery.refetch()} />
+          <ErrorState message={t("dashboard.cropsUnavailable")} onRetry={() => cropsQuery.refetch()} />
         ) : (cropsQuery.data ?? []).length === 0 ? (
           <EmptyState
-            title="No crops added yet"
-            description="Add your farm and the crops you are growing so advice can be matched to them."
+            title={t("dashboard.noCropsTitle")}
+            description={t("dashboard.noCropsDescription")}
             icon={<Sprout className="h-5 w-5" />}
             action={
               <Button asChild>
-                <Link to="/farm">Add your farm</Link>
+                <Link to="/farm">{t("dashboard.addFarm")}</Link>
               </Button>
             }
           />
@@ -202,7 +205,7 @@ function DashboardPage() {
                   crop={crop}
                   action={
                     <Button asChild size="sm" variant="outline">
-                      <Link to="/disease-detection">Check</Link>
+                      <Link to="/disease-detection">{t("card.check")}</Link>
                     </Button>
                   }
                 />
@@ -238,13 +241,22 @@ function DashboardPage() {
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
-                Example notifications (demo data)
+                {t("dashboard.exampleNotifications")}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <ul className="space-y-3">
                 {demoAlerts.map((alert) => (
-                  <AlertCard key={alert.id} alert={alert} />
+                  <AlertCard
+                    key={alert.id}
+                    alert={{
+                      id: alert.id,
+                      level: alert.level,
+                      kind: alert.kind,
+                      title: t(alert.titleKey),
+                      message: t(alert.messageKey),
+                    }}
+                  />
                 ))}
               </ul>
             </CardContent>
