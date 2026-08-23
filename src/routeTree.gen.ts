@@ -14,6 +14,8 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedMarketRouteImport } from './routes/_authenticated/market'
+import { Route as AuthenticatedWeatherRouteImport } from './routes/_authenticated/weather'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -39,18 +41,32 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedMarketRoute = AuthenticatedMarketRouteImport.update({
+  id: '/market',
+  path: '/market',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedWeatherRoute = AuthenticatedWeatherRouteImport.update({
+  id: '/weather',
+  path: '/weather',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/market': typeof AuthenticatedMarketRoute
+  '/weather': typeof AuthenticatedWeatherRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/market': typeof AuthenticatedMarketRoute
+  '/weather': typeof AuthenticatedWeatherRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -59,12 +75,15 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/market': typeof AuthenticatedMarketRoute
+  '/_authenticated/weather': typeof AuthenticatedWeatherRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/register' | '/dashboard'
+  fullPaths:
+    '/' | '/login' | '/register' | '/dashboard' | '/market' | '/weather'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/register' | '/dashboard'
+  to: '/' | '/login' | '/register' | '/dashboard' | '/market' | '/weather'
   id:
     | '__root__'
     | '/'
@@ -72,6 +91,8 @@ export interface FileRouteTypes {
     | '/login'
     | '/register'
     | '/_authenticated/dashboard'
+    | '/_authenticated/market'
+    | '/_authenticated/weather'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -118,15 +139,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/market': {
+      id: '/_authenticated/market'
+      path: '/market'
+      fullPath: '/market'
+      preLoaderRoute: typeof AuthenticatedMarketRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/weather': {
+      id: '/_authenticated/weather'
+      path: '/weather'
+      fullPath: '/weather'
+      preLoaderRoute: typeof AuthenticatedWeatherRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedMarketRoute: typeof AuthenticatedMarketRoute
+  AuthenticatedWeatherRoute: typeof AuthenticatedWeatherRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedMarketRoute: AuthenticatedMarketRoute,
+  AuthenticatedWeatherRoute: AuthenticatedWeatherRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
