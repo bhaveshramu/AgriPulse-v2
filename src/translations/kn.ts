@@ -135,7 +135,6 @@ export const kn: Partial<Record<TranslationKey, string>> = {
   "disease.confidence": "ವಿಶ್ವಾಸ",
   "disease.whatYouCanDo": "ನೀವು ಏನು ಮಾಡಬಹುದು",
   "disease.checkedOn": "ಪರಿಶೀಲಿಸಿದ ದಿನಾಂಕ",
-  "disease.result": "ಫಲಿತಾಂಶ",
   "disease.subtitle": "ಬಾಧಿತ ಎಲೆಯ ಸ್ಪಷ್ಟ ಫೋಟೋ ಹಾಕಿ",
   "disease.notReal": "ರೋಗ ಪತ್ತೆ ಇನ್ನೂ ಸಂಪರ್ಕಗೊಂಡಿಲ್ಲ. ಈ ಪರದೆ ಮಾದರಿ ಫಲಿತಾಂಶವನ್ನಷ್ಟೇ ತೋರಿಸುತ್ತದೆ.",
 
@@ -161,7 +160,6 @@ export const kn: Partial<Record<TranslationKey, string>> = {
   "loan.result": "ಮಾದರಿ ಅರ್ಹತಾ ಮೌಲ್ಯಮಾಪನ",
 
   "profile.farmer": "ರೈತ",
-  "common.exampleResult": "ಮಾದರಿ ಫಲಿತಾಂಶ",
 
   "dashboard.demoNotice": "ಈ ಪರದೆಯ ಹವಾಮಾನ, ಮಾರುಕಟ್ಟೆ ಮತ್ತು ಬೆಳೆ ಪರಿಶೀಲನೆ ಮಾಹಿತಿ ಮಾದರಿ ಮಾಹಿತಿ. ನೈಜ ಸೇವೆಗಳು ಮುಂದಿನ ಹಂತದಲ್ಲಿ ಸಂಪರ್ಕಗೊಳ್ಳುತ್ತವೆ.",
   "dashboard.rentEquipment": "ಯಂತ್ರ ಬಾಡಿಗೆ",

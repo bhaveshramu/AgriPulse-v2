@@ -252,7 +252,7 @@ function DashboardPage() {
                     alert={{
                       id: alert.id,
                       level: alert.level,
-                      kind: alert.kind,
+                      ...(alert.kind ? { kind: alert.kind } : {}),
                       title: t(alert.titleKey),
                       message: t(alert.messageKey),
                     }}
