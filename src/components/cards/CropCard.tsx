@@ -16,7 +16,7 @@ interface CropCardProps {
 }
 
 export function CropCard({ crop, action }: CropCardProps) {
-  const health = healthLabels[crop.health_status] ?? healthLabels.healthy;
+  const health = healthLabels[crop.health_status] ?? healthLabels["healthy"]!;
 
   return (
     <Card>
@@ -32,7 +32,7 @@ export function CropCard({ crop, action }: CropCardProps) {
             </p>
             <p className="text-sm text-muted-foreground">Stage: {crop.growth_stage}</p>
             <p className="text-sm text-muted-foreground">
-              Last crop check: {crop.lastScan ? crop.lastScan : "Not checked yet"}
+              Last crop check: {"Not checked yet"}
             </p>
           </div>
         </div>

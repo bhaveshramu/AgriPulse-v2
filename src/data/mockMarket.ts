@@ -34,7 +34,7 @@ export function buildMockMarketReport(cropName: string, state: string, marketNam
     cropName,
     state,
     marketName,
-    currentPrice: history[history.length - 1].price,
+    currentPrice: history[history.length - 1]!.price,
     minPrice: Math.round(base * 0.86),
     maxPrice: Math.round(base * 1.24),
     unit: "per quintal",

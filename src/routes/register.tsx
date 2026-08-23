@@ -142,7 +142,7 @@ function RegisterPage() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="grid gap-4 sm:grid-cols-2" noValidate>
-              <Field label={t("auth.fullName")} htmlFor="fullName" error={errors.fullName}>
+              <Field label={t("auth.fullName")} htmlFor="fullName" error={errors["fullName"] ?? ""}>
                 <Input
                   id="fullName"
                   className="h-12"
@@ -152,7 +152,7 @@ function RegisterPage() {
                 />
               </Field>
 
-              <Field label={t("auth.mobile")} htmlFor="mobileNumber" error={errors.mobileNumber}>
+              <Field label={t("auth.mobile")} htmlFor="mobileNumber" error={errors["mobileNumber"] ?? ""}>
                 <Input
                   id="mobileNumber"
                   className="h-12"
@@ -164,7 +164,7 @@ function RegisterPage() {
                 />
               </Field>
 
-              <Field label={t("auth.email")} htmlFor="email" error={errors.email} hint="Used to log in">
+              <Field label={t("auth.email")} htmlFor="email" error={errors["email"] ?? ""} hint="Used to log in">
                 <Input
                   id="email"
                   type="email"
@@ -193,7 +193,7 @@ function RegisterPage() {
                 </Select>
               </Field>
 
-              <Field label={t("auth.state")} htmlFor="state" error={errors.state}>
+              <Field label={t("auth.state")} htmlFor="state" error={errors["state"] ?? ""}>
                 <Select
                   value={form.state}
                   onValueChange={(value) => {
@@ -214,7 +214,7 @@ function RegisterPage() {
                 </Select>
               </Field>
 
-              <Field label={t("auth.district")} htmlFor="district" error={errors.district}>
+              <Field label={t("auth.district")} htmlFor="district" error={errors["district"] ?? ""}>
                 {districts.length > 0 ? (
                   <Select value={form.district} onValueChange={(value) => update("district", value)}>
                     <SelectTrigger id="district" className="h-12">
@@ -239,7 +239,7 @@ function RegisterPage() {
                 )}
               </Field>
 
-              <Field label={t("auth.password")} htmlFor="password" error={errors.password}>
+              <Field label={t("auth.password")} htmlFor="password" error={errors["password"] ?? ""}>
                 <Input
                   id="password"
                   type="password"
@@ -250,7 +250,7 @@ function RegisterPage() {
                 />
               </Field>
 
-              <Field label={t("auth.confirmPassword")} htmlFor="confirmPassword" error={errors.confirmPassword}>
+              <Field label={t("auth.confirmPassword")} htmlFor="confirmPassword" error={errors["confirmPassword"] ?? ""}>
                 <Input
                   id="confirmPassword"
                   type="password"
@@ -261,12 +261,12 @@ function RegisterPage() {
                 />
               </Field>
 
-              {errors.form ? (
+              {errors["form"] ?? "" ? (
                 <p
                   role="alert"
                   className="sm:col-span-2 rounded-md border border-destructive/30 bg-destructive/5 p-3 text-sm"
                 >
-                  {errors.form}
+                  {errors["form"] ?? ""}
                 </p>
               ) : null}
 
