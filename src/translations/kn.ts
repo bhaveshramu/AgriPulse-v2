@@ -109,7 +109,7 @@ export const kn: Partial<Record<TranslationKey, string>> = {
   "farm.addFarm": "ಜಮೀನು ಸೇರಿಸಿ",
   "farm.addCrop": "ಬೆಳೆ ಸೇರಿಸಿ",
   "settings.title": "ಸೆಟ್ಟಿಂಗ್‌ಗಳು",
-  "profile.title": "ನನ್ನ ಪ್ರೊಫೈಲ್",,
+  "profile.title": "ನನ್ನ ಪ್ರೊಫೈಲ್",
 
   "card.health.healthy": "ಆರೋಗ್ಯಕರ",
   "card.health.watch": "ಗಮನ ಬೇಕು",
