@@ -58,7 +58,7 @@ export function ErrorState({
     >
       <p className="flex items-start gap-2 text-sm text-foreground">
         <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" aria-hidden="true" />
-        {message ?? t("common.loading")}
+        {message ?? t("common.notAvailable")}
       </p>
       {onRetry ? (
         <Button variant="outline" size="sm" onClick={onRetry}>
