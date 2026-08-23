@@ -4,10 +4,13 @@ import { MapPin, Star, Tractor } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { useTranslation } from "@/contexts/LanguageContext";
 import { formatInr } from "@/services/serviceUtils";
 import type { EquipmentItem } from "@/types";
 
 export function EquipmentCard({ item }: { item: EquipmentItem }) {
+  const t = useTranslation();
+
   return (
     <Card className="flex h-full flex-col">
       <CardContent className="flex flex-1 flex-col gap-3 p-4">
@@ -16,7 +19,7 @@ export function EquipmentCard({ item }: { item: EquipmentItem }) {
             <Tractor className="h-5 w-5" aria-hidden="true" />
           </span>
           <Badge variant={item.isAvailable ? "default" : "secondary"}>
-            {item.isAvailable ? "Available" : "Booked"}
+            {item.isAvailable ? t("equipment.available") : t("equipment.booked")}
           </Badge>
         </div>
 
@@ -27,26 +30,27 @@ export function EquipmentCard({ item }: { item: EquipmentItem }) {
 
         <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
           <MapPin className="h-4 w-4" aria-hidden="true" />
-          {item.district}, {item.state} · {item.distanceKm} km away
+          {item.district}, {item.state} · {item.distanceKm} {t("equipment.kmAway")}
         </p>
 
         <p className="text-sm text-muted-foreground">
-          Owner: <span className="font-medium text-foreground">{item.ownerName}</span>, {item.ownerVillage}
+          {t("equipment.owner")}: <span className="font-medium text-foreground">{item.ownerName}</span>,{" "}
+          {item.ownerVillage}
         </p>
 
         <p className="flex items-center gap-1 text-sm text-muted-foreground">
           <Star className="h-4 w-4 fill-current text-warning" aria-hidden="true" />
-          {item.rating.toFixed(1)} rating
+          {item.rating.toFixed(1)} {t("equipment.rating")}
         </p>
 
         <p className="mt-auto font-display text-xl font-semibold text-foreground">
           {formatInr(item.hourlyPrice)}
-          <span className="ml-1 text-sm font-normal text-muted-foreground">per hour</span>
+          <span className="ml-1 text-sm font-normal text-muted-foreground">{t("equipment.perHour")}</span>
         </p>
 
         <Button asChild className="w-full">
           <Link to="/equipment/$equipmentId" params={{ equipmentId: item.id }}>
-            View Details
+            {t("equipment.details")}
           </Link>
         </Button>
       </CardContent>

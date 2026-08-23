@@ -2,12 +2,14 @@ import { Sprout } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { useTranslation } from "@/contexts/LanguageContext";
+import type { TranslationKey } from "@/translations/en";
 import type { Crop } from "@/types";
 
-const healthLabels: Record<string, { label: string; variant: "default" | "secondary" | "destructive" }> = {
-  healthy: { label: "Healthy", variant: "default" },
-  watch: { label: "Needs watching", variant: "secondary" },
-  affected: { label: "Affected", variant: "destructive" },
+const healthLabels: Record<string, { key: TranslationKey; variant: "default" | "secondary" | "destructive" }> = {
+  healthy: { key: "card.health.healthy", variant: "default" },
+  watch: { key: "card.health.watch", variant: "secondary" },
+  affected: { key: "card.health.affected", variant: "destructive" },
 };
 
 interface CropCardProps {
@@ -16,6 +18,7 @@ interface CropCardProps {
 }
 
 export function CropCard({ crop, action }: CropCardProps) {
+  const t = useTranslation();
   const health = healthLabels[crop.health_status] ?? healthLabels["healthy"]!;
 
   return (
@@ -30,14 +33,16 @@ export function CropCard({ crop, action }: CropCardProps) {
               {crop.name}
               {crop.variety ? <span className="text-muted-foreground"> · {crop.variety}</span> : null}
             </p>
-            <p className="text-sm text-muted-foreground">Stage: {crop.growth_stage}</p>
             <p className="text-sm text-muted-foreground">
-              Last crop check: {"Not checked yet"}
+              {t("card.stage")}: {crop.growth_stage}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              {t("card.lastCheck")}: {t("card.notCheckedYet")}
             </p>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Badge variant={health.variant}>{health.label}</Badge>
+          <Badge variant={health.variant}>{t(health.key)}</Badge>
           {action}
         </div>
       </CardContent>

@@ -2,6 +2,7 @@ import { CloudRain, Droplets, MapPin, Thermometer, Wind } from "lucide-react";
 
 import { DemoBadge } from "@/components/common/DemoBadge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useTranslation } from "@/contexts/LanguageContext";
 import type { WeatherReport } from "@/types";
 
 interface WeatherCardProps {
@@ -12,6 +13,7 @@ interface WeatherCardProps {
 }
 
 export function WeatherCard({ report, title, footer, forecastDays = 5 }: WeatherCardProps) {
+  const t = useTranslation();
   const { now, forecast } = report;
 
   return (
@@ -34,19 +36,19 @@ export function WeatherCard({ report, title, footer, forecastDays = 5 }: Weather
         <dl className="grid grid-cols-3 gap-3 text-sm">
           <div className="rounded-md border border-border bg-secondary p-2.5">
             <dt className="flex items-center gap-1.5 text-muted-foreground">
-              <Droplets className="h-4 w-4" aria-hidden="true" /> Humidity
+              <Droplets className="h-4 w-4" aria-hidden="true" /> {t("weather.humidity")}
             </dt>
             <dd className="mt-1 font-semibold">{now.humidityPercent}%</dd>
           </div>
           <div className="rounded-md border border-border bg-secondary p-2.5">
             <dt className="flex items-center gap-1.5 text-muted-foreground">
-              <CloudRain className="h-4 w-4" aria-hidden="true" /> Rain
+              <CloudRain className="h-4 w-4" aria-hidden="true" /> {t("weather.rain")}
             </dt>
             <dd className="mt-1 font-semibold">{now.rainProbabilityPercent}%</dd>
           </div>
           <div className="rounded-md border border-border bg-secondary p-2.5">
             <dt className="flex items-center gap-1.5 text-muted-foreground">
-              <Wind className="h-4 w-4" aria-hidden="true" /> Wind
+              <Wind className="h-4 w-4" aria-hidden="true" /> {t("weather.wind")}
             </dt>
             <dd className="mt-1 font-semibold">{now.windSpeedKmph} km/h</dd>
           </div>

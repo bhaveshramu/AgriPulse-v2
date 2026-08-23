@@ -1,9 +1,11 @@
 import { MapPin, Phone, User } from "lucide-react";
 
 import { Card, CardContent } from "@/components/ui/card";
+import { useTranslation } from "@/contexts/LanguageContext";
 import type { Profile } from "@/types";
 
 export function FarmerProfileCard({ profile }: { profile: Profile }) {
+  const t = useTranslation();
   const location = [profile.village, profile.district, profile.state].filter(Boolean).join(", ");
 
   return (
@@ -14,7 +16,7 @@ export function FarmerProfileCard({ profile }: { profile: Profile }) {
         </span>
         <div className="min-w-0">
           <h2 className="font-display text-xl font-semibold text-foreground">
-            {profile.full_name || "Farmer"}
+            {profile.full_name || t("profile.farmer")}
           </h2>
           {profile.mobile_number ? (
             <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">

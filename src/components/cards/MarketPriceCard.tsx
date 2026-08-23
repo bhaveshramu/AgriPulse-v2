@@ -2,6 +2,7 @@ import { ArrowDownRight, ArrowUpRight, Minus } from "lucide-react";
 
 import { DemoBadge } from "@/components/common/DemoBadge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useTranslation } from "@/contexts/LanguageContext";
 import { formatInr } from "@/services/serviceUtils";
 import type { MarketReport } from "@/types";
 
@@ -12,9 +13,14 @@ interface MarketPriceCardProps {
 }
 
 export function MarketPriceCard({ report, title, footer }: MarketPriceCardProps) {
+  const t = useTranslation();
   const TrendIcon = report.trend === "up" ? ArrowUpRight : report.trend === "down" ? ArrowDownRight : Minus;
   const trendText =
-    report.trend === "up" ? "Price going up" : report.trend === "down" ? "Price going down" : "Price steady";
+    report.trend === "up"
+      ? t("market.trendUp")
+      : report.trend === "down"
+        ? t("market.trendDown")
+        : t("market.trendSteady");
 
   return (
     <Card>
@@ -34,7 +40,7 @@ export function MarketPriceCard({ report, title, footer }: MarketPriceCardProps)
         </div>
         <p className="flex items-center gap-1.5 text-sm font-medium text-foreground">
           <TrendIcon className="h-4 w-4 text-primary" aria-hidden="true" />
-          {trendText} ({report.trendPercent}% this month)
+          {trendText} ({report.trendPercent}% {t("market.thisMonth")})
         </p>
         {footer}
       </CardContent>

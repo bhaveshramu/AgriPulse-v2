@@ -122,6 +122,63 @@ export const en = {
 
   "settings.title": "Settings",
   "profile.title": "My Profile",
+
+  "card.health.healthy": "Healthy",
+  "card.health.watch": "Needs watching",
+  "card.health.affected": "Affected",
+  "card.stage": "Stage",
+  "card.lastCheck": "Last crop check",
+  "card.notCheckedYet": "Not checked yet",
+  "card.check": "Check",
+
+  "category.crop": "Crop care",
+  "category.weather": "Weather",
+  "category.disease": "Disease prevention",
+  "category.irrigation": "Irrigation",
+  "category.sowing": "Sowing",
+  "category.harvest": "Harvest",
+  "category.market": "Selling",
+
+  "severity.low": "Low severity",
+  "severity.medium": "Medium severity",
+  "severity.high": "High severity",
+  "disease.crop": "Crop",
+  "disease.possible": "Possible disease",
+  "disease.confidence": "Confidence",
+  "disease.whatYouCanDo": "What you can do",
+  "disease.checkedOn": "Checked on",
+
+  "equipment.available": "Available",
+  "equipment.booked": "Booked",
+  "equipment.kmAway": "km away",
+  "equipment.owner": "Owner",
+  "equipment.rating": "rating",
+  "equipment.perHour": "per hour",
+
+  "market.trendUp": "Price going up",
+  "market.trendDown": "Price going down",
+  "market.trendSteady": "Price steady",
+  "market.thisMonth": "this month",
+
+  "profile.farmer": "Farmer",
+
+  "dashboard.demoNotice": "Weather, market and crop-check information on this screen is demo data. Live data services are connected in a later part of the project.",
+  "dashboard.rentEquipment": "Rent Equipment",
+  "dashboard.checkMarketPrice": "Check Market Price",
+  "dashboard.farmAdvisory": "Farm Advisory",
+  "dashboard.weatherUnavailable": "Weather information is temporarily unavailable. Please try again later.",
+  "dashboard.marketUnavailable": "Market prices are temporarily unavailable. Please try again later.",
+  "dashboard.cropsUnavailable": "Your crop list could not be loaded.",
+  "dashboard.noCropsTitle": "No crops added yet",
+  "dashboard.noCropsDescription": "Add your farm and the crops you are growing so advice can be matched to them.",
+  "dashboard.addFarm": "Add your farm",
+  "dashboard.exampleNotifications": "Example notifications (demo data)",
+  "dashboard.alert1.title": "Heavy rain expected on Friday",
+  "dashboard.alert1.message": "Check drainage in low-lying fields and postpone spraying.",
+  "dashboard.alert2.title": "Late blight risk is high this week",
+  "dashboard.alert2.message": "Humidity above 80% for two days. Inspect tomato leaves for dark spots.",
+  "dashboard.alert3.title": "Tomato price rose 6% at Hubballi APMC",
+  "dashboard.alert3.message": "Compare nearby markets before selling this week.",
 } as const;
 
 export type TranslationKey = keyof typeof en;
