@@ -1,5 +1,6 @@
 import { Info } from "lucide-react";
 
+import { useTranslation } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
 
 interface DemoBadgeProps {
@@ -8,11 +9,12 @@ interface DemoBadgeProps {
 }
 
 /** Marks any value on screen that comes from demo data, never a live source. */
-export function DemoBadge({ label = "Demo Data", className }: DemoBadgeProps) {
+export function DemoBadge({ label, className }: DemoBadgeProps) {
+  const t = useTranslation();
   return (
     <span className={cn("demo-chip", className)}>
       <Info className="h-3 w-3" aria-hidden="true" />
-      {label}
+      {label ?? t("common.demoData")}
     </span>
   );
 }
