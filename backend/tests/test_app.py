@@ -21,6 +21,11 @@ class FakeRepository:
         self.disease_scans: dict[str, dict] = {}
         self.market_data: dict[str, dict] = {}
         self.weather_data: dict[str, dict] = {}
+        self.equipment: dict[str, dict] = {}
+        self.equipment_bookings: dict[str, dict] = {}
+        self.loan_assessments: dict[str, dict] = {}
+        self.advisories: dict[str, dict] = {}
+        self.notifications: dict[str, dict] = {}
         self.next_id = 1
 
     @staticmethod
@@ -41,13 +46,14 @@ class FakeRepository:
 
         record_id = self._equals(params, "id")
         farm_id = self._equals(params, "farm_id")
-        public_tables = {"market_data", "weather_data"}
-        rows = list(records.values()) if table in public_tables else [row for row in records.values() if row.get("owner_id") == self.user.user_id]
+        public_read_tables = {"market_data", "weather_data", "advisories", "equipment"}
+        owner_field = {"equipment_bookings": "renter_id", "loan_assessments": "user_id", "notifications": "user_id"}.get(table, "owner_id")
+        rows = list(records.values()) if table in public_read_tables and method == "GET" else [row for row in records.values() if row.get(owner_field) == self.user.user_id]
         if record_id:
             rows = [row for row in rows if row["id"] == record_id]
         if farm_id:
             rows = [row for row in rows if row.get("farm_id") == farm_id]
-        for key in ("crop_name", "state", "district", "market_name", "latitude", "longitude"):
+        for key in ("crop_name", "state", "district", "market_name", "latitude", "longitude", "category"):
             expected = self._equals(params, key)
             if expected is not None:
                 rows = [row for row in rows if str(row.get(key)) == expected]
@@ -59,6 +65,12 @@ class FakeRepository:
             row = {"id": identifier, **(json or {})}
             if table == "disease_scans":
                 row.setdefault("scanned_at", datetime.now(timezone.utc).isoformat())
+            if table == "equipment":
+                row.setdefault("rating", 0)
+            if table == "equipment_bookings":
+                row.setdefault("status", "pending")
+            if table == "loan_assessments":
+                row.setdefault("created_at", datetime.now(timezone.utc).isoformat())
             records[identifier] = row
             return [deepcopy(row)]
         if method == "PATCH":
@@ -222,3 +234,65 @@ def test_authenticated_weather_retrieval_and_filtering() -> None:
         response = client.get("/api/weather?state=Karnataka&district=Mysuru")
     assert response.status_code == 200
     assert [row["id"] for row in response.json()] == ["weather-1"]
+
+
+def test_equipment_discovery_and_owner_protection() -> None:
+    repository = FakeRepository()
+    repository.equipment["equipment-1"] = {"id": "equipment-1", "owner_id": "user-b", "title": "Tractor", "category": "tractor", "description": None, "hourly_price": 500, "state": "Karnataka", "district": "Mysuru", "village": None, "is_available": True, "rating": 4.5}
+    with client_for(repository) as client:
+        discovered = client.get("/api/equipment")
+        update = client.patch("/api/equipment/equipment-1", json={"title": "Changed"})
+    assert discovered.status_code == 200
+    assert discovered.json()[0]["title"] == "Tractor"
+    assert update.status_code == 404
+
+
+def test_equipment_booking_authorization() -> None:
+    repository = FakeRepository()
+    repository.equipment["equipment-1"] = {"id": "equipment-1", "owner_id": "user-b", "title": "Tractor", "category": "tractor", "description": None, "hourly_price": 500, "state": None, "district": None, "village": None, "is_available": True, "rating": 0}
+    repository.equipment_bookings["booking-other"] = {"id": "booking-other", "equipment_id": "equipment-1", "renter_id": "user-b", "start_date": "2026-08-01", "end_date": None, "hours": 2, "total_amount": 1000, "status": "pending"}
+    with client_for(repository) as client:
+        created = client.post("/api/equipment/equipment-1/bookings", json={"hours": 3})
+        denied = client.patch("/api/equipment/bookings/booking-other", json={"status": "cancelled"})
+    assert created.status_code == 201
+    assert created.json()["total_amount"] == 1500
+    assert denied.status_code == 404
+
+
+def test_loan_assessment_creation_and_retrieval() -> None:
+    with client_for(FakeRepository()) as client:
+        created = client.post("/api/loan/assess", json={"land_area": 2, "primary_crop": "Tomato", "annual_income": 150000, "farming_experience_years": 5, "irrigation_available": True})
+        listed = client.get("/api/loan/assessments")
+    assert created.status_code == 201
+    assert "not a loan approval" in created.json()["result_summary"]
+    assert len(listed.json()) == 1
+
+
+def test_advisory_retrieval_and_filtering() -> None:
+    repository = FakeRepository()
+    repository.advisories = {"advisory-1": {"id": "advisory-1", "title": "Tomato care", "body": "Check leaves", "category": "crop", "crop_name": "Tomato", "language": "en", "is_demo": True, "state": "Karnataka", "district": "Mysuru"}, "advisory-2": {"id": "advisory-2", "title": "Potato care", "body": "Check soil", "category": "crop", "crop_name": "Potato", "language": "en", "is_demo": True, "state": "Karnataka", "district": "Mysuru"}}
+    with client_for(repository) as client:
+        response = client.get("/api/advisory?crop_name=Tomato&state=Karnataka")
+    assert response.status_code == 200
+    assert [row["id"] for row in response.json()] == ["advisory-1"]
+
+
+def test_notification_ownership_and_read_operation() -> None:
+    repository = FakeRepository()
+    repository.notifications = {"notification-1": {"id": "notification-1", "user_id": "user-a", "title": "Weather", "message": "Rain expected", "type": "info", "is_read": False, "created_at": "2026-08-01T00:00:00Z"}, "notification-other": {"id": "notification-other", "user_id": "user-b", "title": "Private", "message": "Only B", "type": "info", "is_read": False, "created_at": "2026-08-01T00:00:00Z"}}
+    with client_for(repository) as client:
+        listed = client.get("/api/notifications")
+        read = client.patch("/api/notifications/notification-1/read")
+        denied = client.patch("/api/notifications/notification-other/read")
+    assert [row["id"] for row in listed.json()] == ["notification-1"]
+    assert read.status_code == 200 and read.json()["is_read"] is True
+    assert denied.status_code == 404
+
+
+def test_part_2e_endpoints_require_authentication() -> None:
+    with TestClient(app) as client:
+        assert client.get("/api/equipment").status_code == 401
+        assert client.get("/api/equipment/equipment-1/bookings").status_code == 401
+        assert client.post("/api/loan/assess", json={"land_area": 1, "primary_crop": "Tomato", "annual_income": 1, "farming_experience_years": 1}).status_code == 401
+        assert client.get("/api/advisory").status_code == 401
+        assert client.get("/api/notifications").status_code == 401

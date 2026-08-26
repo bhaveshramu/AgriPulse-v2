@@ -30,7 +30,7 @@ export function EquipmentCard({ item }: { item: EquipmentItem }) {
 
         <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
           <MapPin className="h-4 w-4" aria-hidden="true" />
-          {item.district}, {item.state} · {item.distanceKm} {t("equipment.kmAway")}
+          {item.district}, {item.state} · {item.distanceKm === null ? "Distance unavailable" : `${item.distanceKm} ${t("equipment.kmAway")}`}
         </p>
 
         <p className="text-sm text-muted-foreground">

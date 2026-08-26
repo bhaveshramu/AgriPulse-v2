@@ -1,23 +1,19 @@
-import { mockAdvisories } from "@/data/mockAdvisory";
+import { apiRequest } from "@/services/apiClient";
 import type { AdvisoryCategory, AdvisoryItem } from "@/types";
-import { simulateNetwork } from "@/services/serviceUtils";
 
-export interface AdvisoryFilters {
-  cropName?: string | "all";
-  category?: AdvisoryCategory | "all";
-}
+export interface AdvisoryFilters { cropName?: string | "all"; category?: AdvisoryCategory | "all"; }
+interface AdvisoryApiRow { id: string; title: string; body: string; category: string; crop_name: string | null; is_demo: boolean; }
 
-/** Advisory content service. Demo content in Part 1. */
 export async function listAdvisories(filters: AdvisoryFilters = {}): Promise<AdvisoryItem[]> {
-  await simulateNetwork();
-  return mockAdvisories.filter((item) => {
-    if (filters.cropName && filters.cropName !== "all" && item.cropName !== filters.cropName) return false;
-    if (filters.category && filters.category !== "all" && item.category !== filters.category) return false;
-    return true;
-  });
+  const params = new URLSearchParams();
+  if (filters.cropName && filters.cropName !== "all") params.set("crop_name", filters.cropName);
+  if (filters.category && filters.category !== "all") params.set("category", filters.category);
+  const rows = await apiRequest<AdvisoryApiRow[]>(`/api/advisory?${params}`);
+  return rows.map((row) => ({ id: row.id, title: row.title, body: row.body, category: row.category as AdvisoryCategory, cropName: row.crop_name, isDemo: row.is_demo }));
 }
 
 export async function getDailyAdvisory(): Promise<AdvisoryItem> {
-  await simulateNetwork(250);
-  return mockAdvisories[0]!;
+  const items = await listAdvisories();
+  if (!items[0]) throw new Error("No advisories are available.");
+  return items[0];
 }

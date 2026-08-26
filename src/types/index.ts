@@ -120,7 +120,7 @@ export interface EquipmentItem {
   hourlyPrice: number;
   district: string;
   state: string;
-  distanceKm: number;
+  distanceKm: number | null;
   isAvailable: boolean;
   rating: number;
   ownerName: string;

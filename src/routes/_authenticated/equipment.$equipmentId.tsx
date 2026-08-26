@@ -89,7 +89,7 @@ function EquipmentDetailPage() {
 
               <p className="flex items-center gap-2 text-sm text-muted-foreground">
                 <MapPin className="h-4 w-4" aria-hidden="true" />
-                {query.data.district}, {query.data.state} · {query.data.distanceKm} km away
+                {query.data.district}, {query.data.state} · {query.data.distanceKm === null ? "Distance unavailable" : `${query.data.distanceKm} km away`}
               </p>
 
               <p className="flex items-center gap-2 text-sm text-muted-foreground">
