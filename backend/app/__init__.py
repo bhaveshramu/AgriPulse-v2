@@ -1,0 +1,1 @@
+"""AgriPulse FastAPI application package."""
