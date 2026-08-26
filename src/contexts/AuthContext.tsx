@@ -27,7 +27,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const loadUserData = useCallback(async (userId: string) => {
     try {
       const [nextProfile, nextRoles] = await Promise.all([
-        fetchProfile(userId),
+      fetchProfile(),
         fetchRoles(userId),
       ]);
       setProfile(nextProfile);

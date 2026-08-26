@@ -1,51 +1,47 @@
-import { supabase } from "@/integrations/supabase/client";
+import { apiRequest } from "@/services/apiClient";
 import type { Crop, Farm } from "@/types";
 
 /** Farm and crop data access. Backed by Lovable Cloud with row level security. */
 
 export async function listFarms(): Promise<Farm[]> {
-  const { data, error } = await supabase
-    .from("farms")
-    .select("id, owner_id, name, state, district, village, land_area, land_unit, soil_type, irrigation_type")
-    .order("created_at", { ascending: true });
-  if (error) throw new Error(error.message);
-  return (data ?? []) as Farm[];
+  return apiRequest<Farm[]>("/api/farms");
 }
 
-export type FarmInput = Omit<Farm, "id" | "owner_id">;
+export type FarmInput = Omit<Farm, "id">;
 
-export async function createFarm(ownerId: string, input: FarmInput): Promise<void> {
-  const { error } = await supabase.from("farms").insert({ ...input, owner_id: ownerId });
-  if (error) throw new Error(error.message);
+export async function createFarm(input: FarmInput): Promise<Farm> {
+  return apiRequest<Farm>("/api/farms", { method: "POST", body: JSON.stringify(input) });
 }
 
-export async function updateFarm(id: string, input: Partial<FarmInput>): Promise<void> {
-  const { error } = await supabase.from("farms").update(input).eq("id", id);
-  if (error) throw new Error(error.message);
+export async function updateFarm(id: string, input: Partial<FarmInput>): Promise<Farm> {
+  return apiRequest<Farm>(`/api/farms/${id}`, { method: "PATCH", body: JSON.stringify(input) });
 }
 
 export async function deleteFarm(id: string): Promise<void> {
-  const { error } = await supabase.from("farms").delete().eq("id", id);
-  if (error) throw new Error(error.message);
+  await apiRequest<void>(`/api/farms/${id}`, { method: "DELETE" });
 }
 
 export async function listCrops(): Promise<Crop[]> {
-  const { data, error } = await supabase
-    .from("crops")
-    .select("id, farm_id, name, variety, sowing_date, expected_harvest_date, area, growth_stage, health_status")
-    .order("created_at", { ascending: true });
-  if (error) throw new Error(error.message);
-  return (data ?? []) as Crop[];
+  const farms = await listFarms();
+  const cropsByFarm = await Promise.all(farms.map((farm) => listFarmCrops(farm.id)));
+  return cropsByFarm.flat();
 }
 
 export type CropInput = Omit<Crop, "id">;
 
-export async function createCrop(ownerId: string, input: CropInput): Promise<void> {
-  const { error } = await supabase.from("crops").insert({ ...input, owner_id: ownerId });
-  if (error) throw new Error(error.message);
+export async function listFarmCrops(farmId: string): Promise<Crop[]> {
+  return apiRequest<Crop[]>(`/api/farms/${farmId}/crops`);
 }
 
-export async function deleteCrop(id: string): Promise<void> {
-  const { error } = await supabase.from("crops").delete().eq("id", id);
-  if (error) throw new Error(error.message);
+export async function createCrop(input: CropInput): Promise<Crop> {
+  const { farm_id, ...payload } = input;
+  return apiRequest<Crop>(`/api/farms/${farm_id}/crops`, { method: "POST", body: JSON.stringify(payload) });
+}
+
+export async function updateCrop(farmId: string, cropId: string, input: Partial<Omit<CropInput, "farm_id">>): Promise<Crop> {
+  return apiRequest<Crop>(`/api/farms/${farmId}/crops/${cropId}`, { method: "PATCH", body: JSON.stringify(input) });
+}
+
+export async function deleteCrop(farmId: string, cropId: string): Promise<void> {
+  await apiRequest<void>(`/api/farms/${farmId}/crops/${cropId}`, { method: "DELETE" });
 }

@@ -1,7 +1,7 @@
 /**
  * Shared helpers for the service layer.
  *
- * The base URL of the future Python/FastAPI backend is read from an
+ * The base URL of the Python/FastAPI backend is read from an
  * environment variable so no endpoint or credential is hard-coded in the app.
  */
 export const API_BASE_URL = import.meta.env['VITE_API_BASE_URL'] ?? "";

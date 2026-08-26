@@ -6,6 +6,7 @@ is deliberately not used here.
 """
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import Any
 
 import httpx
@@ -17,10 +18,16 @@ from app.core.config import Settings, get_settings
 bearer_scheme = HTTPBearer(auto_error=False)
 
 
+@dataclass(frozen=True)
+class AuthenticatedUser:
+    user_id: str
+    access_token: str
+
+
 async def get_current_user(
     credentials: HTTPAuthorizationCredentials | None = Depends(bearer_scheme),
     settings: Settings = Depends(get_settings),
-) -> dict[str, Any]:
+) -> AuthenticatedUser:
     """Return the authenticated Supabase user for a bearer access token."""
     if credentials is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Missing bearer token")
@@ -41,4 +48,8 @@ async def get_current_user(
 
     if response.status_code != 200:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired access token")
-    return response.json()
+    user: dict[str, Any] = response.json()
+    user_id = user.get("id")
+    if not isinstance(user_id, str):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid access token")
+    return AuthenticatedUser(user_id=user_id, access_token=credentials.credentials)

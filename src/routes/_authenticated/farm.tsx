@@ -94,7 +94,7 @@ function FarmPage() {
     mutationFn: async () => {
       if (!user) throw new Error("Not signed in");
       if (!farmForm.name.trim()) throw new Error("Please enter a name for your farm.");
-      await createFarm(user.id, {
+      await createFarm({
         name: farmForm.name.trim(),
         state: farmForm.state,
         district: farmForm.district,
@@ -128,7 +128,7 @@ function FarmPage() {
     mutationFn: async () => {
       if (!user) throw new Error("Not signed in");
       if (!cropForm.farm_id) throw new Error("Please choose which farm this crop is on.");
-      await createCrop(user.id, {
+      await createCrop({
         farm_id: cropForm.farm_id,
         name: cropForm.name,
         variety: cropForm.variety.trim() || null,
@@ -149,7 +149,7 @@ function FarmPage() {
   });
 
   const removeCrop = useMutation({
-    mutationFn: (id: string) => deleteCrop(id),
+    mutationFn: (crop: { id: string; farm_id: string }) => deleteCrop(crop.farm_id, crop.id),
     onSuccess: () => {
       toast.success("Crop removed");
       void queryClient.invalidateQueries({ queryKey: ["crops"] });
@@ -554,7 +554,7 @@ function FarmPage() {
                         variant="ghost"
                         size="icon"
                         aria-label={`Remove ${crop.name}`}
-                        onClick={() => removeCrop.mutate(crop.id)}
+                        onClick={() => removeCrop.mutate(crop)}
                       >
                         <Trash2 className="h-4 w-4 text-destructive" />
                       </Button>

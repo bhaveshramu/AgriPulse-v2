@@ -67,7 +67,7 @@ function ProfilePage() {
       if (form.mobile_number && !/^[6-9]\d{9}$/.test(form.mobile_number)) {
         throw new Error("Please enter a valid 10 digit mobile number.");
       }
-      await updateProfile(user.id, {
+      await updateProfile({
         full_name: form.full_name.trim(),
         mobile_number: form.mobile_number.trim() || null,
         state: form.state,

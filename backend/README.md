@@ -1,8 +1,8 @@
 # AgriPulse FastAPI backend (Part 2A)
 
-This folder adds a small Python/FastAPI foundation alongside the existing React
-frontend. It does not replace the frontend, change Supabase tables, call
-external APIs, run ML, or process payments.
+This folder adds a FastAPI API alongside the existing React frontend. It does
+not replace the frontend, change Supabase tables, call external APIs, run ML,
+or process payments.
 
 ## Prerequisites
 
@@ -44,6 +44,11 @@ uvicorn app.main:app --reload --port 8000
 Check `http://localhost:8000/api/health`. Interactive API documentation is at
 `http://localhost:8000/docs` in local development.
 
+To use the connected profile, farm, and crop pages locally, set the frontend's
+`VITE_API_BASE_URL=http://localhost:8000` in its local environment file, then
+start the existing frontend in a separate terminal. The frontend sends the
+current Supabase access token with each API call.
+
 ## Run tests
 
 From `backend/`:
@@ -55,12 +60,15 @@ pytest
 ## Architecture
 
 - `app/main.py` configures FastAPI, CORS, logging, and safe JSON errors.
-- `app/api/routes/` has the Part 2A route modules. Each currently provides only
-  a module health endpoint; no production behavior is simulated.
+- `app/api/routes/` contains the route modules. Part 2B provides authenticated
+  profile, farm, and farm-scoped crop APIs; the remaining domains only expose
+  module health endpoints.
 - `app/core/security.py` is the future dependency for validating the Supabase
   bearer token received from the frontend. It uses the anonymous key and never
   uses the service-role key for user authentication.
-- `app/services/` and `app/repositories/` are focused extension points for
+- `app/db/supabase.py` forwards the user's bearer token to Supabase PostgREST,
+  keeping ordinary profile/farm/crop operations subject to existing RLS.
+- `app/services/` and `app/repositories/` remain focused extension points for
   future business logic and Supabase/PostgreSQL access.
 - `app/schemas/disease.py` reserves the structured future model output for
   Tomato and Potato Late Blight; no model or image endpoint exists yet.

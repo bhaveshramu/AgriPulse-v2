@@ -16,7 +16,6 @@ export interface Profile {
 
 export interface Farm {
   id: string;
-  owner_id: string;
   name: string;
   state: string | null;
   district: string | null;

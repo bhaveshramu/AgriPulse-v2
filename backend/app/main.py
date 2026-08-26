@@ -4,7 +4,7 @@ from __future__ import annotations
 import logging
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -37,6 +37,13 @@ app.add_middleware(
     allow_headers=["Authorization", "Content-Type"],
 )
 app.include_router(api_router, prefix="/api")
+
+
+@app.exception_handler(HTTPException)
+async def http_exception_handler(_: Request, exc: HTTPException) -> JSONResponse:
+    codes = {401: "unauthenticated", 403: "forbidden", 404: "not_found", 422: "validation_error", 503: "service_unavailable"}
+    message = exc.detail if isinstance(exc.detail, str) else "The request could not be completed."
+    return JSONResponse(status_code=exc.status_code, content=ErrorResponse(code=codes.get(exc.status_code, "request_error"), message=message).model_dump())
 
 
 @app.exception_handler(RequestValidationError)

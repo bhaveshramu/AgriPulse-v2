@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { apiRequest } from "@/services/apiClient";
 import type { LanguageCode, Profile, UserRole } from "@/types";
 
 /**
@@ -55,16 +56,13 @@ export const developmentAuthProvider: AuthProvider = {
   },
 };
 
-export async function fetchProfile(userId: string): Promise<Profile | null> {
-  const { data, error } = await supabase
-    .from("profiles")
-    .select(
-      "id, full_name, mobile_number, email, state, district, village, preferred_language, farming_experience_years",
-    )
-    .eq("id", userId)
-    .maybeSingle();
-  if (error) throw new Error(error.message);
-  return data;
+export async function fetchProfile(): Promise<Profile | null> {
+  try {
+    return await apiRequest<Profile>("/api/profiles/me");
+  } catch (error) {
+    if (error instanceof Error && error.message === "Profile not found") return null;
+    throw error;
+  }
 }
 
 export async function fetchRoles(userId: string): Promise<UserRole[]> {
@@ -73,7 +71,9 @@ export async function fetchRoles(userId: string): Promise<UserRole[]> {
   return (data ?? []).map((row) => row.role as UserRole);
 }
 
-export async function updateProfile(userId: string, patch: Partial<Profile>) {
-  const { error } = await supabase.from("profiles").update(patch).eq("id", userId);
-  if (error) throw new Error(error.message);
+export async function updateProfile(patch: Partial<Profile>): Promise<Profile> {
+  return apiRequest<Profile>("/api/profiles/me", {
+    method: "PATCH",
+    body: JSON.stringify(patch),
+  });
 }
