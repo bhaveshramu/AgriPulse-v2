@@ -19,6 +19,8 @@ class FakeRepository:
         self.farms: dict[str, dict] = {}
         self.crops: dict[str, dict] = {}
         self.disease_scans: dict[str, dict] = {}
+        self.market_data: dict[str, dict] = {}
+        self.weather_data: dict[str, dict] = {}
         self.next_id = 1
 
     @staticmethod
@@ -39,11 +41,16 @@ class FakeRepository:
 
         record_id = self._equals(params, "id")
         farm_id = self._equals(params, "farm_id")
-        rows = [row for row in records.values() if row.get("owner_id") == self.user.user_id]
+        public_tables = {"market_data", "weather_data"}
+        rows = list(records.values()) if table in public_tables else [row for row in records.values() if row.get("owner_id") == self.user.user_id]
         if record_id:
             rows = [row for row in rows if row["id"] == record_id]
         if farm_id:
             rows = [row for row in rows if row.get("farm_id") == farm_id]
+        for key in ("crop_name", "state", "district", "market_name", "latitude", "longitude"):
+            expected = self._equals(params, key)
+            if expected is not None:
+                rows = [row for row in rows if str(row.get(key)) == expected]
         if method == "GET":
             return deepcopy(rows)
         if method == "POST":
@@ -179,3 +186,39 @@ def test_authenticated_disease_analysis_creates_placeholder_scan() -> None:
     assert body["model_version"] == "placeholder-v0"
     assert body["status"] == "placeholder"
     assert len(repository.disease_scans) == 1
+
+
+def test_market_retrieval_requires_authentication() -> None:
+    with TestClient(app) as client:
+        response = client.get("/api/market")
+    assert response.status_code == 401
+
+
+def test_authenticated_market_retrieval_and_filtering() -> None:
+    repository = FakeRepository()
+    repository.market_data = {
+        "market-1": {"id": "market-1", "crop_name": "Tomato", "state": "Karnataka", "district": "Mysuru", "market_name": "Mysuru Mandi", "price_date": "2026-08-01", "min_price": 1000, "max_price": 1500, "modal_price": 1200, "source": "demo"},
+        "market-2": {"id": "market-2", "crop_name": "Potato", "state": "Karnataka", "district": "Mysuru", "market_name": "Mysuru Mandi", "price_date": "2026-08-01", "min_price": 800, "max_price": 1100, "modal_price": 900, "source": "demo"},
+    }
+    with client_for(repository) as client:
+        response = client.get("/api/market?crop_name=Tomato&state=Karnataka")
+    assert response.status_code == 200
+    assert [row["id"] for row in response.json()] == ["market-1"]
+
+
+def test_weather_retrieval_requires_authentication() -> None:
+    with TestClient(app) as client:
+        response = client.get("/api/weather")
+    assert response.status_code == 401
+
+
+def test_authenticated_weather_retrieval_and_filtering() -> None:
+    repository = FakeRepository()
+    repository.weather_data = {
+        "weather-1": {"id": "weather-1", "farm_id": None, "location_name": "Mysuru, Karnataka", "recorded_for": "2026-08-01", "temperature_c": 28, "humidity_percent": 65, "wind_speed_kmph": 10, "rain_probability_percent": 30, "rainfall_mm": 0, "condition": "Cloudy", "state": "Karnataka", "district": "Mysuru", "latitude": 12.3, "longitude": 76.6, "forecast_time": None, "source": "demo"},
+        "weather-2": {"id": "weather-2", "farm_id": None, "location_name": "Pune, Maharashtra", "recorded_for": "2026-08-01", "temperature_c": 30, "humidity_percent": 50, "wind_speed_kmph": 8, "rain_probability_percent": 10, "rainfall_mm": 0, "condition": "Clear", "state": "Maharashtra", "district": "Pune", "latitude": 18.5, "longitude": 73.8, "forecast_time": None, "source": "demo"},
+    }
+    with client_for(repository) as client:
+        response = client.get("/api/weather?state=Karnataka&district=Mysuru")
+    assert response.status_code == 200
+    assert [row["id"] for row in response.json()] == ["weather-1"]

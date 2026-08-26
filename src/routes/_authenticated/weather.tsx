@@ -27,11 +27,11 @@ export const Route = createFileRoute("/_authenticated/weather")({
 function WeatherPage() {
   const t = useTranslation();
   const { profile } = useAuth();
-  const locationName = [profile?.district, profile?.state].filter(Boolean).join(", ") || undefined;
+  const location = { state: profile?.state ?? undefined, district: profile?.district ?? undefined };
 
   const weatherQuery = useQuery({
-    queryKey: ["weather", locationName],
-    queryFn: () => getWeatherReport(locationName),
+    queryKey: ["weather", location.state, location.district],
+    queryFn: () => getWeatherReport(location),
   });
 
   return (
