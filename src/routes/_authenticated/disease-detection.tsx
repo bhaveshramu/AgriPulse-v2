@@ -1,5 +1,6 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { Camera, Loader2, RefreshCcw, Upload } from "lucide-react";
 
 import { DiseaseScanCard } from "@/components/cards/DiseaseScanCard";
@@ -17,7 +18,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useTranslation } from "@/contexts/LanguageContext";
-import { analyseCropImage, SUPPORTED_SCAN_CROPS, type ScanCrop } from "@/services/diseaseService";
+import { analyseCropImage } from "@/services/diseaseService";
+import { listCrops } from "@/services/farmService";
 import type { DiseaseResult } from "@/types";
 
 export const Route = createFileRoute("/_authenticated/disease-detection")({
@@ -42,11 +44,18 @@ const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
 function DiseaseDetectionPage() {
   const t = useTranslation();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [cropName, setCropName] = useState<ScanCrop>("Tomato");
+  const cropsQuery = useQuery({ queryKey: ["crops"], queryFn: listCrops });
+  const [cropId, setCropId] = useState("");
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [status, setStatus] = useState<ScanStatus>("empty");
   const [result, setResult] = useState<DiseaseResult | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!cropId && cropsQuery.data?.[0]) setCropId(cropsQuery.data[0].id);
+  }, [cropId, cropsQuery.data]);
+
+  const selectedCrop = cropsQuery.data?.find((crop) => crop.id === cropId);
 
   function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -73,11 +82,11 @@ function DiseaseDetectionPage() {
   }
 
   async function handleAnalyse() {
-    if (!imageUrl) return;
+    if (!imageUrl || !selectedCrop) return;
     setStatus("analyzing");
     setErrorMessage(null);
     try {
-      const nextResult = await analyseCropImage(cropName, imageUrl);
+      const nextResult = await analyseCropImage(selectedCrop, imageUrl);
       setResult(nextResult);
       setStatus("result");
     } catch {
@@ -109,20 +118,20 @@ function DiseaseDetectionPage() {
             <CardContent className="space-y-5">
               <div className="space-y-1.5">
                 <Label htmlFor="scan-crop">{t("disease.selectCrop")}</Label>
-                <Select value={cropName} onValueChange={(value) => setCropName(value as ScanCrop)}>
+                <Select value={cropId} onValueChange={setCropId} disabled={cropsQuery.isPending || !cropsQuery.data?.length}>
                   <SelectTrigger id="scan-crop" className="h-12">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {SUPPORTED_SCAN_CROPS.map((crop) => (
-                      <SelectItem key={crop} value={crop}>
-                        {crop}
+                    {(cropsQuery.data ?? []).map((crop) => (
+                      <SelectItem key={crop.id} value={crop.id}>
+                        {crop.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
                 <p className="text-xs text-muted-foreground">
-                  Tomato and Potato are supported in this version. More crops are added later.
+                  Select a crop from your farm before checking its leaf photo.
                 </p>
               </div>
 
@@ -168,7 +177,7 @@ function DiseaseDetectionPage() {
                     <Button
                       className="h-12 flex-1 text-base"
                       onClick={handleAnalyse}
-                      disabled={status === "analyzing"}
+                      disabled={status === "analyzing" || !selectedCrop}
                     >
                       {status === "analyzing" ? (
                         <>

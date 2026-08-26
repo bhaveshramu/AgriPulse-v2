@@ -97,7 +97,7 @@ export interface DiseaseResult {
   cropName: string;
   diseaseName: string;
   confidencePercent: number;
-  severity: "low" | "medium" | "high";
+  severity: "low" | "medium" | "high" | "unknown";
   recommendation: string;
   scannedAt: string;
   imageUrl: string;

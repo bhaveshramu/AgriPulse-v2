@@ -14,6 +14,7 @@ const severityLabel: Record<
   low: { key: "severity.low", variant: "secondary" },
   medium: { key: "severity.medium", variant: "default" },
   high: { key: "severity.high", variant: "destructive" },
+  unknown: { key: "common.notAvailable", variant: "secondary" },
 };
 
 export function DiseaseScanCard({ result }: { result: DiseaseResult }) {

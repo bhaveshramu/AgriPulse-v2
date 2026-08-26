@@ -1,4 +1,5 @@
 from copy import deepcopy
+from datetime import datetime, timezone
 
 from fastapi.testclient import TestClient
 
@@ -17,6 +18,7 @@ class FakeRepository:
         }
         self.farms: dict[str, dict] = {}
         self.crops: dict[str, dict] = {}
+        self.disease_scans: dict[str, dict] = {}
         self.next_id = 1
 
     @staticmethod
@@ -48,6 +50,8 @@ class FakeRepository:
             identifier = f"{table}-{self.next_id}"
             self.next_id += 1
             row = {"id": identifier, **(json or {})}
+            if table == "disease_scans":
+                row.setdefault("scanned_at", datetime.now(timezone.utc).isoformat())
             records[identifier] = row
             return [deepcopy(row)]
         if method == "PATCH":
@@ -137,3 +141,41 @@ def test_user_cannot_access_another_users_farm_or_crops() -> None:
     with client_for(repository) as client:
         response = client.get("/api/farms/other-farm/crops/other-crop")
     assert response.status_code == 404
+
+
+def test_disease_analysis_requires_authentication() -> None:
+    with TestClient(app) as client:
+        response = client.post("/api/disease/analyze", json={"crop_id": "crop-1", "image_reference": "browser-preview://selected-image"})
+    assert response.status_code == 401
+
+
+def test_disease_analysis_rejects_unowned_crop() -> None:
+    repository = FakeRepository()
+    repository.crops["other-crop"] = {"id": "other-crop", "owner_id": "user-b", "farm_id": "other-farm", "name": "Tomato", "growth_stage": "sowing", "health_status": "healthy"}
+    with client_for(repository) as client:
+        response = client.post("/api/disease/analyze", json={"crop_id": "other-crop", "image_reference": "browser-preview://selected-image"})
+    assert response.status_code == 404
+
+
+def test_disease_analysis_rejects_crop_farm_mismatch() -> None:
+    repository = FakeRepository()
+    repository.farms["farm-1"] = {"id": "farm-1", "owner_id": "user-a", "name": "Home field", "land_unit": "acre"}
+    repository.farms["farm-2"] = {"id": "farm-2", "owner_id": "user-a", "name": "River field", "land_unit": "acre"}
+    repository.crops["crop-1"] = {"id": "crop-1", "owner_id": "user-a", "farm_id": "farm-1", "name": "Tomato", "growth_stage": "flowering", "health_status": "healthy"}
+    with client_for(repository) as client:
+        response = client.post("/api/disease/analyze", json={"crop_id": "crop-1", "farm_id": "farm-2", "image_reference": "browser-preview://selected-image"})
+    assert response.status_code == 422
+
+
+def test_authenticated_disease_analysis_creates_placeholder_scan() -> None:
+    repository = FakeRepository()
+    repository.farms["farm-1"] = {"id": "farm-1", "owner_id": "user-a", "name": "Home field", "land_unit": "acre"}
+    repository.crops["crop-1"] = {"id": "crop-1", "owner_id": "user-a", "farm_id": "farm-1", "name": "Tomato", "growth_stage": "flowering", "health_status": "healthy"}
+    with client_for(repository) as client:
+        response = client.post("/api/disease/analyze", json={"crop_id": "crop-1", "farm_id": "farm-1", "image_reference": "browser-preview://selected-image"})
+    assert response.status_code == 201
+    body = response.json()
+    assert body["crop"] == "Tomato"
+    assert body["model_version"] == "placeholder-v0"
+    assert body["status"] == "placeholder"
+    assert len(repository.disease_scans) == 1

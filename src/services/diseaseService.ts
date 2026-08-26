@@ -1,45 +1,36 @@
-import type { DiseaseResult } from "@/types";
-import { simulateNetwork } from "@/services/serviceUtils";
+import { apiRequest } from "@/services/apiClient";
+import type { Crop, DiseaseResult } from "@/types";
 
-export const SUPPORTED_SCAN_CROPS = ["Tomato", "Potato"] as const;
-export type ScanCrop = (typeof SUPPORTED_SCAN_CROPS)[number];
+interface DiseaseAnalysisApiResponse {
+  scan_id: string;
+  crop: string;
+  disease: string;
+  confidence: number;
+  severity: "low" | "medium" | "high" | "unknown";
+  recommendation: string;
+  model_version: string;
+  scanned_at: string;
+  status: string;
+}
 
-const DEMO_RESULTS: Record<ScanCrop, Omit<DiseaseResult, "imageUrl" | "scannedAt">> = {
-  Tomato: {
-    cropName: "Tomato",
-    diseaseName: "Tomato Late Blight",
-    confidencePercent: 92,
-    severity: "high",
-    recommendation:
-      "Remove and destroy badly affected leaves. Improve airflow between plants and avoid evening irrigation. Consult your local agriculture officer before using any chemical spray.",
-    isDemo: true,
-  },
-  Potato: {
-    cropName: "Potato",
-    diseaseName: "Potato Late Blight",
-    confidencePercent: 88,
-    severity: "medium",
-    recommendation:
-      "Check the whole field for similar spots. Keep ridges firm so tubers stay covered and stop overhead watering until the weather dries.",
-    isDemo: true,
-  },
-};
-
-/**
- * Crop disease service abstraction.
- *
- * IMPORTANT: no disease model is connected in Part 1. This function returns a
- * clearly-labelled example result. In a later phase its body is replaced by a
- * request to the YOLOv8 FastAPI endpoint; the UI contract stays the same.
- */
-export async function analyseCropImage(cropName: ScanCrop, imageUrl: string): Promise<DiseaseResult> {
-  await simulateNetwork(1600);
-  if (!imageUrl) {
-    throw new Error("No image provided");
-  }
+/** Records a placeholder scan. The browser image remains local until storage is implemented. */
+export async function analyseCropImage(crop: Crop, imageUrl: string): Promise<DiseaseResult> {
+  const response = await apiRequest<DiseaseAnalysisApiResponse>("/api/disease/analyze", {
+    method: "POST",
+    body: JSON.stringify({
+      crop_id: crop.id,
+      farm_id: crop.farm_id,
+      image_reference: "browser-preview://selected-image",
+    }),
+  });
   return {
-    ...DEMO_RESULTS[cropName],
+    cropName: response.crop,
+    diseaseName: response.disease,
+    confidencePercent: response.confidence,
+    severity: response.severity,
+    recommendation: response.recommendation,
     imageUrl,
-    scannedAt: new Date().toISOString(),
+    scannedAt: response.scanned_at,
+    isDemo: response.status === "placeholder",
   };
 }
